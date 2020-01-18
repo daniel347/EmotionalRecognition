@@ -9,6 +9,7 @@ from queue import *
 video_stream = io.BytesIO()
 image_stream = io.BytesIO()
 lock = Lock()
+file_counter = 0
 
 image_queue = LifoQueue(maxsize=100)
 
