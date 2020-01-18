@@ -54,8 +54,8 @@ def make_request():
 			request_url = 'https://hackcambridge-emotiondetector.cognitiveservices.azure.com/face/v1.0/detect'
 			request = requests.post(request_url, params=request_params['request_data'], headers=request_params['headers'], data=image_to_request)
 			print (request.json())
-		except:
-			print ("Try threw an error")
+		except Exception as e:
+			print (e)
 
 
 
