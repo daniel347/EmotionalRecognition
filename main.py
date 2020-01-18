@@ -7,13 +7,13 @@ import io
 from queue import *
 
 video_stream = io.BytesIO()
-image_stream = io.BytesIO()
 lock = Lock()
 file_counter = 0
 
 image_queue = LifoQueue(maxsize=100)
 
 def emotion_rec():
+	image_stream = io.BytesIO()
 	with picamera.PiCamera() as camera:
 		camera.resolution = (640,480)
 		camera.start_preview()
@@ -27,7 +27,7 @@ def emotion_rec():
 				with image_queue.mutex:
 					image_queue.clear()
 			image_queue.put(image_stream)
-			image_stream.flush()
+			image_stream = io.BytesIO()
 			Thread(target=make_request).start()
 		camera.stop_recording()
 		camera.stop_preview()
