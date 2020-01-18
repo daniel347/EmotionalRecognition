@@ -42,7 +42,7 @@ def make_request():
 	global file_counter
 	print ("Making_request")
 	request_params = get_request_params()
-	if not image_queue.empty():
+	while not image_queue.empty():
 		image_to_request = image_queue.get()
 		try:
 			with open("test_file_{0}.jpeg".format(file_counter), "wb") as fp:
@@ -56,7 +56,5 @@ def make_request():
 			print (request.json())
 		except Exception as e:
 			print (e)
-
-
 
 emotion_rec()
