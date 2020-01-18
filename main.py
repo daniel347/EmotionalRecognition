@@ -41,9 +41,9 @@ def get_request_params():
 
 def make_request():
 	global file_counter
-	print ("Making_request")
 	request_params = get_request_params()
 	while not image_queue.empty():
+		print (image_queue.size())
 		image_to_request = image_queue.get()
 		try:
 			with open("test_file_{0}.jpeg".format(file_counter), "wb") as fp:
