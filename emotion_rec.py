@@ -18,6 +18,7 @@ audio_generator.get_token()
 
 def emotion_rec():
 	image_stream = io.BytesIO()
+	Thread(target=make_request).start()
 	with picamera.PiCamera() as camera:
 		camera.resolution = (640,480)
 		camera.brightness = 60
@@ -26,7 +27,6 @@ def emotion_rec():
 		time.sleep(2)
 		camera.start_recording(video_stream, format='h264', quality=23)
 		start_time = time.time()
-		Thread(target=make_request).start()
 		while (time.time() - start_time) < 30:
 			camera.wait_recording(5)
 			camera.capture(image_stream, use_video_port=True, format='jpeg')
@@ -46,6 +46,7 @@ def get_request_params():
 	return request_params
 
 def make_request():
+	print (image_queue.qsize())
 	#global file_counter
 	request_params = get_request_params()
 	previous_prominent_emotion = ""
