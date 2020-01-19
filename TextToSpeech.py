@@ -49,9 +49,9 @@ class TextToSpeech(object):
 		response = requests.post(constructed_url, headers=headers, data=body)
 		if response.status_code == 200:
 				with open('sample-' + self.timestr + '.wav', 'wb') as audio:
-			audio.write(response.content)
-			system("sudo omxplayer -o local sample-{0}.wav".format(self.timestr))
-			os.remove("sample-{0}.wav".format(self.timestr))
+					audio.write(response.content)
+					os.system("sudo omxplayer -o local sample-{0}.wav".format(self.timestr))
+					os.remove("sample-{0}.wav".format(self.timestr))
 		print("\nStatus code: " + str(response.status_code) + "\nYour TTS is ready for playback.\n")
 		else:
 			print("\nStatus code: " + str(response.status_code) +
