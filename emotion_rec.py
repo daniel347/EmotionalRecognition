@@ -16,10 +16,11 @@ image_queue = LifoQueue(maxsize=1)
 image_results = []
 audio_generator = TextToSpeech('18cc0b753fa74192a6bac800febea621')
 audio_generator.get_token()
+recording = False
 
 def emotion_rec():
+	global recording
 	image_stream = io.BytesIO()
-	recording = False
 	with picamera.PiCamera() as camera:
 		camera.resolution = (640,480)
 		camera.brightness = 60
@@ -28,10 +29,10 @@ def emotion_rec():
 		time.sleep(2)
 		camera.start_recording(video_stream, format='h264', quality=23)
 		start_time = time.time()
-		while (time.time() - start_time) < 120 or recording:
-			camera.wait_recording(3)
+		while (time.time() - start_time) < 60 or recording:
+			print ("Starting recording")
 			camera.capture(image_stream, use_video_port=True, format='jpeg')
-			camera.wait_recording(3)
+			camera.wait_recording(1)
 			#image_numpy_array = np.empty((480, 640, 3), dtype=np.uint8)
 			#camera.capture(image_numpy_array, 'rgb')
 			#nparr = np.fromstring(image_stream.read(), dtype="int32")
@@ -59,7 +60,6 @@ def get_request_params():
 	return request_params
 
 def make_request():
-	print (image_queue.qsize())
 	#global file_counter
 	request_params = get_request_params()
 	previous_prominent_emotion = ""
@@ -91,4 +91,6 @@ def find_prominent_emotion(emotion_dictionary):
 	sorted_emotions = [k for k, v in sorted(detectable_emotions.items(), key=lambda item: item[1])]
 	print ("Sorted", sorted_emotions)
 	return sorted_emotions[-1]
+
+#Thread(target=make_request()).start()
 emotion_rec()

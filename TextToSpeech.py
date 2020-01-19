@@ -53,7 +53,7 @@ class TextToSpeech(object):
                     audio.write(response.content)
                     try:
                         subprocess.run(["sudo", "omxplayer", "-o", "local", "sample-{0}.wav".format(self.timestr)])
-                        time.sleep(5)
+                        #time.sleep(5)
                         print("\nStatus code: " + str(response.status_code) + "\nYour TTS is ready for playback.\n")
                     except Exception as e:
                         print (e)
