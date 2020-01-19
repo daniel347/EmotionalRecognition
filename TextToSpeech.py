@@ -12,6 +12,7 @@ import time
 from xml.etree import ElementTree
 import random
 import simpleaudio as sa
+import subprocess
 
 class TextToSpeech(object):
     def __init__(self, subscription_key):
@@ -51,7 +52,7 @@ class TextToSpeech(object):
                 with open('sample-' + self.timestr + '.wav', 'wb') as audio:
                     audio.write(response.content)
                     try:
-                        os.system("sudo omxplayer -o local sample-{0}.wav".format(self.timestr))
+                        subprocess.run(["sudo", "omxplayer", "-o", "local", "sample-{0}.wav".format(self.timestr)])
                         print("\nStatus code: " + str(response.status_code) + "\nYour TTS is ready for playback.\n")
                     except Exception as e:
                         print (e)

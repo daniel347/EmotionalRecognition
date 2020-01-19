@@ -11,7 +11,7 @@ video_stream = io.BytesIO()
 lock = Lock()
 file_counter = 0
 
-image_queue = LifoQueue(maxsize=100)
+image_queue = LifoQueue(maxsize=1)
 image_results = []
 audio_generator = TextToSpeech('18cc0b753fa74192a6bac800febea621')
 audio_generator.get_token()
@@ -26,8 +26,8 @@ def emotion_rec():
 		time.sleep(2)
 		camera.start_recording(video_stream, format='h264', quality=23)
 		start_time = time.time()
-		while (time.time() - start_time) < 20:
-			camera.wait_recording(2)
+		while (time.time() - start_time) < 30:
+			camera.wait_recording(5)
 			camera.capture(image_stream, use_video_port=True, format='jpeg')
 			if image_queue.full():
 				with image_queue.mutex:
@@ -67,7 +67,6 @@ def make_request():
 			if previous_prominent_emotion != prominent_emotion and len(request.json()) > 0 and prominent_emotion != "":
 				previous_prominent_emotion = prominent_emotion
 				audio_generator.save_audio(prominent_emotion)
-				time.sleep(2)
 		except Exception as e:
 			print (e)
 
