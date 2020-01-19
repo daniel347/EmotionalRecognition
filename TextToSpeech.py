@@ -50,9 +50,12 @@ class TextToSpeech(object):
 		if response.status_code == 200:
 				with open('sample-' + self.timestr + '.wav', 'wb') as audio:
 					audio.write(response.content)
-					os.system("sudo omxplayer -o local sample-{0}.wav".format(self.timestr))
-					os.remove("sample-{0}.wav".format(self.timestr))
-				print("\nStatus code: " + str(response.status_code) + "\nYour TTS is ready for playback.\n")
+					try:
+						os.system("sudo omxplayer -o local sample-{0}.wav".format(self.timestr))
+						os.remove("sample-{0}.wav".format(self.timestr))
+						print("\nStatus code: " + str(response.status_code) + "\nYour TTS is ready for playback.\n")
+					except Exception as e:
+						print (e)
 		else:
 			print("\nStatus code: " + str(response.status_code) +
 			  "\nSomething went wrong. Check your subscription key and headers.\n")
