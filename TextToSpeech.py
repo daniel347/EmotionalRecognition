@@ -10,29 +10,25 @@ import os
 import requests
 import time
 from xml.etree import ElementTree
-
-try:
-    input = raw_input
-except NameError:
-    pass
+import random
 
 
 class TextToSpeech(object):
-    def __init__(self,subscription_key): 
+    def __init__(self, subscription_key):
         self.subscription_key = subscription_key #service key id
         self.tts = input("What would you like to convert to speech: ")
         self.timestr = time.strftime("%Y%m%d-%H%M")
         self.access_token = None
+
     def get_token(self):
         fetch_token_url = "https://uksouth.api.cognitive.microsoft.com/sts/v1.0/issuetoken" #endpoint issued
         headers = { 'Ocp-Apim-Subscription-Key': self.subscription_key}
         response = requests.post(fetch_token_url, headers=headers)
         print(response.text)
         self.access_token = str(response.text)
-        print(self.access_token)
         
         
-    def save_audio(self):
+    def save_audio(self, emotion):
         base_url = 'https://uksouth.tts.speech.microsoft.com/'
         path = 'cognitiveservices/v1'
         constructed_url = base_url + path
@@ -48,9 +44,9 @@ class TextToSpeech(object):
         voice.set('{http://www.w3.org/XML/1998/namespace}lang', 'en-US')
         voice.set(
             'name', 'Microsoft Server Speech Text to Speech Voice (en-US, Guy24KRUS)')
-        voice.text = self.tts
+        # DONE Write dialogues around this
+        voice.text = choose_dialogue(emotion=emotion)
         body = ElementTree.tostring(xml_body)
-
         response = requests.post(constructed_url, headers=headers, data=body)
         print(response.text)
         if response.status_code == 200:
@@ -62,11 +58,53 @@ class TextToSpeech(object):
             print("\nStatus code: " + str(response.status_code) +
               "\nSomething went wrong. Check your subscription key and headers.\n")
     
-if __name__ == "__main__":
-   subscription_key = "18cc0b753fa74192a6bac800febea621"
-   app = TextToSpeech(subscription_key)
-   app.get_token()
-   app.save_audio()
+# if __name__ == "__main__":
+#    subscription_key = "18cc0b753fa74192a6bac800febea621"
+#    app = TextToSpeech(subscription_key)
+#    app.get_token()
+#    app.save_audio()
         
         
-    
+def choose_dialogue(emotion):
+    dialogues = {
+    'sadness': [
+        "They’re down and low, maybe you could be the one that puts a smile on their face today!",
+        "Tell them they’re not alone and that you’ll hear them out, no questions asked ",
+        "Life is cold and gray sometimes, how you can be their warm sunshine today?"
+
+    ], 'happiness':[
+            "This is a really positive conversation. Well done!",
+            "Your companions are really happy right now!",
+            "They seem happy, ask them more about what makes them happy!"
+
+    ], "surprise":[
+            "They look surprised, ask them what did they find out?",
+            "Ask them what's surprising!",
+            "Something surprises them! Find out what it is!"
+
+    ], "fear":[
+            "This person is feeling fearful, maybe you could reassure them?",
+            "Your companion is scared, please comfort them!",
+            "They seem scared! Why don't you try and help them?"
+
+    ], "contempt":[
+
+            "Remind them to breathe, bottling up hate is just going to result in an explosion!",
+            "Draw a picture, scream your lungs out, or just talk—which idea are you going to inspire them with today?",
+            "Can you help them find the bright spots in their moments of hatred?"
+
+    ], "disgust":[
+
+        ],
+
+    "anger":[
+
+    ],
+
+    "neutral": [
+
+    ]}
+
+    selected_emotion_sentence = random.choice(dialogues[emotion])
+
+    return selected_emotion_sentence

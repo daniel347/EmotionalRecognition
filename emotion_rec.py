@@ -5,12 +5,16 @@ import picamera
 import requests
 import io
 from queue import *
+from TextToSpeech import TextToSpeech
 
 video_stream = io.BytesIO()
 lock = Lock()
 file_counter = 0
 
 image_queue = LifoQueue(maxsize=100)
+image_results = []
+audio_generator = TextToSpeech('18cc0b753fa74192a6bac800febea621')
+audio_generator.get_token()
 
 def emotion_rec():
 	image_stream = io.BytesIO()
@@ -36,14 +40,15 @@ def emotion_rec():
 
 
 def get_request_params():
-	request_params = {}
-	request_params['headers'] = {'Ocp-Apim-Subscription-Key': '165fbaf18f434fd3a52fca8890ca2800', 'Content-type': 'application/octet-stream'}
-	request_params['request_data'] = {'returnFaceAttributes':'emotion,smile', 'overload':'stream'}
+	request_params = {'headers': {'Ocp-Apim-Subscription-Key': '165fbaf18f434fd3a52fca8890ca2800',
+								  'Content-type': 'application/octet-stream'},
+					  'request_data': {'returnFaceAttributes': 'emotion,smile', 'overload': 'stream'}}
 	return request_params
 
 def make_request():
 	#global file_counter
 	request_params = get_request_params()
+	previous_prominent_emotion = ""
 	while not image_queue.empty():
 		# print (image_queue.size())
 		image_to_request = image_queue.get()
@@ -56,8 +61,14 @@ def make_request():
 			image_to_request.seek(0)
 			request_url = 'https://hackcambridge-emotiondetector.cognitiveservices.azure.com/face/v1.0/detect'
 			request = requests.post(request_url, params=request_params['request_data'], headers=request_params['headers'], data=image_to_request)
-			print (request.json())
+			prominent_emotion = find_prominent_emotion(request.json())
+			# This is only triggered on a change of emotion
+			if previous_prominent_emotion != prominent_emotion:
+				previous_prominent_emotion = prominent_emotion
+				audio_generator.save_audio(prominent_emotion)
 		except Exception as e:
 			print (e)
 
-emotion_rec()
+def find_prominent_emotion(emotion_dictionary):
+	detectable_emotions = emotion_dictionary[0]['faceAttributes']
+	return [k for k, v in sorted(detectable_emotions.items(), key=lambda item: item[1])][0]
