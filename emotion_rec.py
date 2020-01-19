@@ -26,6 +26,7 @@ def emotion_rec():
 		time.sleep(2)
 		camera.start_recording(video_stream, format='h264', quality=23)
 		start_time = time.time()
+		Thread(target=make_request).start()
 		while (time.time() - start_time) < 30:
 			camera.wait_recording(5)
 			camera.capture(image_stream, use_video_port=True, format='jpeg')
@@ -34,7 +35,6 @@ def emotion_rec():
 					image_queue.clear()
 			image_queue.put(image_stream)
 			image_stream = io.BytesIO()
-			Thread(target=make_request).start()
 		camera.stop_recording()
 		camera.stop_preview()
 
@@ -65,6 +65,7 @@ def make_request():
 			prominent_emotion = find_prominent_emotion(request.json()) if len(request.json()) > 0 else ""
 			# This is only triggered on a change of emotion
 			if previous_prominent_emotion != prominent_emotion and len(request.json()) > 0 and prominent_emotion != "":
+				print (previous_prominent_emotion, prominent_emotion)
 				previous_prominent_emotion = prominent_emotion
 				audio_generator.save_audio(prominent_emotion)
 		except Exception as e:
