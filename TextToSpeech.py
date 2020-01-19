@@ -52,7 +52,7 @@ class TextToSpeech(object):
 					audio.write(response.content)
 					os.system("sudo omxplayer -o local sample-{0}.wav".format(self.timestr))
 					os.remove("sample-{0}.wav".format(self.timestr))
-		print("\nStatus code: " + str(response.status_code) + "\nYour TTS is ready for playback.\n")
+				print("\nStatus code: " + str(response.status_code) + "\nYour TTS is ready for playback.\n")
 		else:
 			print("\nStatus code: " + str(response.status_code) +
 			  "\nSomething went wrong. Check your subscription key and headers.\n")
