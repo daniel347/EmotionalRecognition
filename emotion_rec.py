@@ -19,6 +19,7 @@ audio_generator.get_token()
 
 def emotion_rec():
 	image_stream = io.BytesIO()
+	recording = False
 	with picamera.PiCamera() as camera:
 		camera.resolution = (640,480)
 		camera.brightness = 60
@@ -27,11 +28,20 @@ def emotion_rec():
 		time.sleep(2)
 		camera.start_recording(video_stream, format='h264', quality=23)
 		start_time = time.time()
-		while (time.time() - start_time) < 30:
-			camera.wait_recording(5)
+		while (time.time() - start_time) < 120 or recording:
+			camera.wait_recording(3)
 			camera.capture(image_stream, use_video_port=True, format='jpeg')
-			image_numpy_array = np.frombuffer(image_stream)
-			print (image_numpy_array)
+			camera.wait_recording(3)
+			#image_numpy_array = np.empty((480, 640, 3), dtype=np.uint8)
+			#camera.capture(image_numpy_array, 'rgb')
+			#nparr = np.fromstring(image_stream.read(), dtype="int32")
+			image_array = cv2.imdecode(np.fromstring(image_stream.getvalue(), dtype=np.uint8), 1)
+			if np.mean(image_array) <= 127 and not recording:
+				audio_generator.save_audio("hello")
+				recording = True
+			elif np.mean(image_array) <=127 and recording:
+				recording = False
+				audio_generator.save_audio("bye")
 			if image_queue.full():
 				with image_queue.mutex:
 					image_queue.queue.clear()

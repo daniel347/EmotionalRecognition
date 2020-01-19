@@ -113,9 +113,9 @@ def choose_dialogue(emotion):
     "neutral": [
 
         "There's not much you can do when someone shows no expression. Maintain eye contact!",
-        "Listen intently and see if they'd like to discuss their feelings about the matter.",
+        "They are neutral! Listen intently and see if they'd like to discuss their feelings about the matter.",
 
-    ]}
+    ], "hello": ["Hey there, got your back in this conversation, don't worry", "Hiya, don't worry, am here now to help you through this conversation"], "bye":["Well done! You did really well. Keep it up. See you soon!", "That was nicely done, you are getting better at it each day!"]}
 
     selected_emotion_sentence = random.choice(dialogues[emotion])
 
