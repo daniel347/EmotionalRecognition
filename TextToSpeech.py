@@ -60,7 +60,7 @@ class TextToSpeech(object):
         else:
             print("\nStatus code: " + str(response.status_code) +
               "\nSomething went wrong. Check your subscription key and headers.\n")
-        os.remove("sample-{0}.wav".format(self.timestr))
+        # TODO Handle os.remove on deactivation
 # if __name__ == "__main__":
 #    subscription_key = "18cc0b753fa74192a6bac800febea621"
 #    app = TextToSpeech(subscription_key)
