@@ -42,17 +42,17 @@ def get_request_params():
 	return request_params
 
 def make_request():
-	global file_counter
+	#global file_counter
 	request_params = get_request_params()
 	while not image_queue.empty():
-		print (image_queue.size())
+		# print (image_queue.size())
 		image_to_request = image_queue.get()
 		try:
-			with open("test_file_{0}.jpeg".format(file_counter), "wb") as fp:
-				image_to_request.seek(0)
-				file = image_to_request.read()
-				fp.write(file)
-				file_counter+=1
+			#with open("test_file_{0}.jpeg".format(file_counter), "wb") as fp:
+				#image_to_request.seek(0)
+				#file = image_to_request.read()
+				#fp.write(file)
+				#file_counter+=1
 			image_to_request.seek(0)
 			request_url = 'https://hackcambridge-emotiondetector.cognitiveservices.azure.com/face/v1.0/detect'
 			request = requests.post(request_url, params=request_params['request_data'], headers=request_params['headers'], data=image_to_request)
