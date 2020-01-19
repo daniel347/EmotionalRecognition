@@ -16,6 +16,7 @@ image_queue = LifoQueue(maxsize=1)
 image_results = []
 audio_generator = TextToSpeech('18cc0b753fa74192a6bac800febea621')
 audio_generator.get_token()
+audio_generator.save_audio('start_up')
 recording = False
 
 def emotion_rec():

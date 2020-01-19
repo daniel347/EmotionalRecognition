@@ -14,6 +14,8 @@ import random
 import simpleaudio as sa
 import subprocess
 
+device_name = "Dora the Fedora"
+
 class TextToSpeech(object):
     def __init__(self, subscription_key):
         self.subscription_key = subscription_key #service key id
@@ -82,7 +84,9 @@ if __name__ == "__main__":
 
 def choose_dialogue(emotion):
     dialogues = {
-    'sadness': [
+    'start_up': [
+        "Hello, I'm " + device_name + ". I'm here to help you while having conversations"
+    ],  'sadness': [
         "They’re down and low, maybe you could be the one that puts a smile on their face today!",
         "Tell them they’re not alone and that you’ll hear them out, no questions asked ",
         "Life is cold and gray sometimes, how you can be their warm sunshine today?"
