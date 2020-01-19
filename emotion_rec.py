@@ -61,14 +61,19 @@ def make_request():
 			image_to_request.seek(0)
 			request_url = 'https://hackcambridge-emotiondetector.cognitiveservices.azure.com/face/v1.0/detect'
 			request = requests.post(request_url, params=request_params['request_data'], headers=request_params['headers'], data=image_to_request)
-			prominent_emotion = find_prominent_emotion(request.json())
+			print (request.json())
+			prominent_emotion = find_prominent_emotion(request.json()) if len(request.json()) > 0 else ""
 			# This is only triggered on a change of emotion
-			if previous_prominent_emotion != prominent_emotion:
+			if previous_prominent_emotion != prominent_emotion and len(request.json()) > 0:
 				previous_prominent_emotion = prominent_emotion
 				audio_generator.save_audio(prominent_emotion)
 		except Exception as e:
 			print (e)
 
 def find_prominent_emotion(emotion_dictionary):
-	detectable_emotions = emotion_dictionary[0]['faceAttributes']
-	return [k for k, v in sorted(detectable_emotions.items(), key=lambda item: item[1])][0]
+	print ("Finding prominent emotions")
+	detectable_emotions = emotion_dictionary[0]['faceAttributes']['emotion']
+	sorted_emotions = [k for k, v in sorted(detectable_emotions.items(), key=lambda item: item[1])]
+	print ("Sorted", sorted_emotions)
+	return sorted_emotions[-1]
+emotion_rec()

@@ -11,12 +11,12 @@ import requests
 import time
 from xml.etree import ElementTree
 import random
-
+import simpleaudio as sa
 
 class TextToSpeech(object):
     def __init__(self, subscription_key):
         self.subscription_key = subscription_key #service key id
-        self.tts = input("What would you like to convert to speech: ")
+        # self.tts = input("What would you like to convert to speech: ")
         self.timestr = time.strftime("%Y%m%d-%H%M")
         self.access_token = None
 
@@ -26,8 +26,7 @@ class TextToSpeech(object):
         response = requests.post(fetch_token_url, headers=headers)
         print(response.text)
         self.access_token = str(response.text)
-        
-        
+
     def save_audio(self, emotion):
         base_url = 'https://uksouth.tts.speech.microsoft.com/'
         path = 'cognitiveservices/v1'
@@ -48,23 +47,20 @@ class TextToSpeech(object):
         voice.text = choose_dialogue(emotion=emotion)
         body = ElementTree.tostring(xml_body)
         response = requests.post(constructed_url, headers=headers, data=body)
-        print(response.text)
         if response.status_code == 200:
-            with open('sample-' + self.timestr + '.wav', 'wb') as audio:
-                audio.write(response.content)
-                print("\nStatus code: " + str(response.status_code) +
-                  "\nYour TTS is ready for playback.\n")
+                with open('sample-' + self.timestr + '.wav', 'wb') as audio:
+			audio.write(response.content)
+			system("sudo omxplayer -o local sample-{0}.wav".format(self.timestr))
+			os.remove("sample-{0}.wav".format(self.timestr))
+		print("\nStatus code: " + str(response.status_code) + "\nYour TTS is ready for playback.\n")
         else:
             print("\nStatus code: " + str(response.status_code) +
               "\nSomething went wrong. Check your subscription key and headers.\n")
-    
 # if __name__ == "__main__":
 #    subscription_key = "18cc0b753fa74192a6bac800febea621"
 #    app = TextToSpeech(subscription_key)
 #    app.get_token()
 #    app.save_audio()
-        
-        
 def choose_dialogue(emotion):
     dialogues = {
     'sadness': [
