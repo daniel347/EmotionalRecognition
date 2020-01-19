@@ -95,13 +95,24 @@ def choose_dialogue(emotion):
 
     ], "disgust":[
 
+            "The uphill is always difficult, but you’re about to go downhill soon—how can you remind them of this today?",
+            "When life gives you lemons, you make some sweet lemonade— how can you be their lemonade maker today?",
+            "The best way to get someone out of a “disgusted” moment is to remind them of all they're doing and how "
+            "much they are valued - can you do that for someone today?"
         ],
 
     "anger":[
 
+        "Anger is never good. Ask them if they'd like a glass of water and hear their concerns!",
+        "They seem angry, is there something you can do to help them calm down?",
+        "The best remedy to their anger is to listen calmly to their concerns and address them!"
+
     ],
 
     "neutral": [
+
+        "There's not much you can do when someone shows no expression. Maintain eye contact!",
+        "Listen intently and see if they'd like to discuss their feelings about the matter.",
 
     ]}
 
