@@ -6,6 +6,7 @@ import requests
 import io
 from queue import *
 from TextToSpeech import TextToSpeech
+import numpy as np
 
 video_stream = io.BytesIO()
 lock = Lock()
@@ -29,6 +30,8 @@ def emotion_rec():
 		while (time.time() - start_time) < 30:
 			camera.wait_recording(5)
 			camera.capture(image_stream, use_video_port=True, format='jpeg')
+			image_numpy_array = np.frombuffer(image_stream)
+			print (image_numpy_array)
 			if image_queue.full():
 				with image_queue.mutex:
 					image_queue.queue.clear()
