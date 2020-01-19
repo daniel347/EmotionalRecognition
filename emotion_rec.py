@@ -7,6 +7,7 @@ import io
 from queue import *
 from TextToSpeech import TextToSpeech
 import numpy as np
+import Database
 
 video_stream = io.BytesIO()
 lock = Lock()
@@ -19,11 +20,18 @@ audio_generator.get_token()
 audio_generator.save_audio('start_up')
 recording = False
 
+# connect to database
+db = Database.Database()
+
+IMG_HEIGHT = 640
+IMG_WIDTH = 480
+IMG_CENTRE = (IMG_HEIGHT/2, IMG_WIDTH/2)
+
 def emotion_rec():
 	global recording
 	image_stream = io.BytesIO()
 	with picamera.PiCamera() as camera:
-		camera.resolution = (640,480)
+		camera.resolution = (IMG_HEIGHT,IMG_WIDTH)
 		camera.brightness = 60
 		camera.rotation = 180
 		camera.start_preview()
@@ -83,6 +91,12 @@ def make_request():
 				print (previous_prominent_emotion, prominent_emotion)
 				previous_prominent_emotion = prominent_emotion
 				audio_generator.save_audio(prominent_emotion)
+
+                # add database entry
+                try:
+                    db.add_emotion_data(time.strftime("%Y%m%d-%H%M"), request.json()[0]['faceAttributes']['emotion'], find_eye_contact_dist(request.json()))
+                except Exception as e:
+                    print(e)
 		except Exception as e:
 			print (e)
 
@@ -92,6 +106,14 @@ def find_prominent_emotion(emotion_dictionary):
 	sorted_emotions = [k for k, v in sorted(detectable_emotions.items(), key=lambda item: item[1])]
 	print ("Sorted", sorted_emotions)
 	return sorted_emotions[-1]
+
+def find_eye_contact_dist(request):
+    return 0
+
+    # nose_x = request[0]['faceLandmarks']['nose']['x']
+    # nose_y = request[0]['faceLandmarks']['nose']['y']
+    # return (IMG_CENTRE[0] - nose_x) ** 2 + (IMG_CENTRE[1] - nose_y)
+
 
 #Thread(target=make_request()).start()
 emotion_rec()
