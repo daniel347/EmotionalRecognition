@@ -16,6 +16,8 @@ def emotion_rec():
 	image_stream = io.BytesIO()
 	with picamera.PiCamera() as camera:
 		camera.resolution = (640,480)
+		camera.brightness = 60
+		camera.rotation = 180
 		camera.start_preview()
 		time.sleep(2)
 		camera.start_recording(video_stream, format='h264', quality=23)
@@ -47,7 +49,7 @@ def make_request():
 		image_to_request = image_queue.get()
 		try:
 			with open("test_file_{0}.jpeg".format(file_counter), "wb") as fp:
-				image_stream.seek(0)
+				image_to_request.seek(0)
 				file = image_to_request.read()
 				fp.write(file)
 				file_counter+=1
