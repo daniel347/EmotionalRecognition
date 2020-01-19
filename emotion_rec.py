@@ -18,7 +18,6 @@ audio_generator.get_token()
 
 def emotion_rec():
 	image_stream = io.BytesIO()
-	Thread(target=make_request).start()
 	with picamera.PiCamera() as camera:
 		camera.resolution = (640,480)
 		camera.brightness = 60
@@ -34,6 +33,7 @@ def emotion_rec():
 				with image_queue.mutex:
 					image_queue.queue.clear()
 			image_queue.put(image_stream)
+			make_request()
 			image_stream = io.BytesIO()
 		camera.stop_recording()
 		camera.stop_preview()
