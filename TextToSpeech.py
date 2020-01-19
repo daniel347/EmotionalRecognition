@@ -22,11 +22,23 @@ class TextToSpeech(object):
         self.access_token = None
 
     def get_token(self):
+        try:
+            with open("tts_token.txt", "r") as f:
+                self.access_token = f.read()
+                print(self.access_token)
+                f.close()
+        except Exception as e:
+            print(e)
+
         fetch_token_url = "https://uksouth.api.cognitive.microsoft.com/sts/v1.0/issuetoken" #endpoint issued
         headers = { 'Ocp-Apim-Subscription-Key': self.subscription_key}
         response = requests.post(fetch_token_url, headers=headers)
         print(response.text)
         self.access_token = str(response.text)
+
+        with open("tts_token.txt", "w") as f:
+            f.write(self.access_token)
+            f.close()
 
     def save_audio(self, emotion):
         base_url = 'https://uksouth.tts.speech.microsoft.com/'
@@ -61,11 +73,13 @@ class TextToSpeech(object):
             print("\nStatus code: " + str(response.status_code) +
               "\nSomething went wrong. Check your subscription key and headers.\n")
         # TODO Handle os.remove on deactivation
-# if __name__ == "__main__":
-#    subscription_key = "18cc0b753fa74192a6bac800febea621"
-#    app = TextToSpeech(subscription_key)
-#    app.get_token()
-#    app.save_audio()
+
+if __name__ == "__main__":
+    subscription_key = "18cc0b753fa74192a6bac800febea621"
+    app = TextToSpeech(subscription_key)
+    app.get_token()
+    app.save_audio()
+
 def choose_dialogue(emotion):
     dialogues = {
     'sadness': [
