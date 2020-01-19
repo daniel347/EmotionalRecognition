@@ -32,7 +32,7 @@ def emotion_rec():
 			camera.capture(image_stream, use_video_port=True, format='jpeg')
 			if image_queue.full():
 				with image_queue.mutex:
-					image_queue.clear()
+					image_queue.queue.clear()
 			image_queue.put(image_stream)
 			image_stream = io.BytesIO()
 		camera.stop_recording()
