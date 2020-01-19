@@ -67,6 +67,7 @@ def make_request():
 			if previous_prominent_emotion != prominent_emotion and len(request.json()) > 0 and prominent_emotion != "":
 				previous_prominent_emotion = prominent_emotion
 				audio_generator.save_audio(prominent_emotion)
+				time.sleep(2)
 		except Exception as e:
 			print (e)
 
